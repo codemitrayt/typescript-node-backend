@@ -1,0 +1,79 @@
+import cors from "cors";
+import session from "express-session";
+import express, { Response, Request, Application } from "express";
+
+import { ENV } from "../../configs";
+import { logger } from "../../logger";
+import { NODE_ENV } from "../../constants";
+import { authRouter } from "../../routers";
+import { errorHandler } from "../../middlewares";
+
+class AppService {
+  private app: Application;
+
+  constructor() {
+    this.app = express();
+    this.initializeMiddlewares();
+    this.initializeRoutes();
+  }
+
+  initializeMiddlewares() {
+    const corsOption: cors.CorsOptions = {
+      origin: "*",
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    };
+
+    const sessionOptions = session({
+      secret: ENV.SESSION_SECRET_KEY,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: ENV.NODE_ENV === NODE_ENV.PRODUCTION,
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      },
+    });
+
+    this.app.options("*", cors(corsOption));
+    this.app.use(sessionOptions);
+    this.app.use(express.json());
+    this.app.use(express.static("public"));
+  }
+
+  healthCheck = (req: Request, res: Response) => {
+    const message = {
+      status: "OK",
+      message: "Server is running.",
+    };
+
+    return res.status(200).json(message);
+  };
+
+  initializeRoutes() {
+    this.app.get("/", this.healthCheck);
+    this.app.use("/api/v1/auth", authRouter);
+
+    this.app.use(errorHandler);
+  }
+
+  start() {
+    const PORT = ENV.APP_PORT || 5500;
+    try {
+      this.app.listen(PORT, () =>
+        logger.info({ msg: `Server listening on http://localhost:${PORT}` }),
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        process.exit(1);
+      }
+    }
+  }
+
+  getApp() {
+    return this.app;
+  }
+}
+
+export { AppService };
