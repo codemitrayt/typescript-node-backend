@@ -12,6 +12,15 @@ const {
 
   SESSION_SECRET_KEY = "DEFAULT_SESSION_SECRET_KEY",
   ACCESS_TOKEN_SECRET = "DEFAULT_ACCESS_TOKEN_SECRET",
+
+  DB_HOST = "ocalhost",
+  DB_PORT = "5435",
+  DB_NAME = "postgres",
+  DB_USER = "postgres",
+  DB_PASSWORD = "postgres",
+  DB_MAX_CONNECTIONS = "20",
+  DB_IDLE_TIMEOUT = "30000",
+  DB_CONNECTION_TIMEOUT = "2000",
 } = process.env;
 
 const ENV = {
@@ -25,6 +34,15 @@ const ENV = {
 
   SESSION_SECRET_KEY,
   ACCESS_TOKEN_SECRET,
+
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
+  DB_MAX_CONNECTIONS,
+  DB_IDLE_TIMEOUT,
+  DB_CONNECTION_TIMEOUT,
 };
 
 export { ENV };
