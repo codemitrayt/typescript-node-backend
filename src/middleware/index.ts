@@ -7,3 +7,4 @@ export {
 } from "./auth.middleware";
 export { morganMiddleware } from "./morgan.middleware";
 export { errorHandler } from "./error.middleware";
+export { uploader } from "./uploader.middleware";

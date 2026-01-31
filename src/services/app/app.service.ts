@@ -5,9 +5,9 @@ import express, { Response, Request, Application } from "express";
 import { ENV } from "../../config";
 import { logger } from "../../logger";
 import { connectMongoDB } from "../../db";
-import { authRouter } from "../../routes";
 import { NODE_ENV } from "../../constant";
 import { errorHandler } from "../../middleware";
+import { authRouter, uploadRouter } from "../../routes";
 
 class AppService {
   private app: Application;
@@ -55,6 +55,7 @@ class AppService {
   initializeRoutes() {
     this.app.get("/", this.healthCheck);
     this.app.use("/api/v1/auth", authRouter);
+    this.app.use("/api/v1/upload", uploadRouter);
 
     this.app.use(errorHandler);
   }
