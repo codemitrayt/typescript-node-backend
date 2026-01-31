@@ -1,4 +1,3 @@
-import path from "path";
 import { v4 as uuid } from "uuid";
 import { Storage, Bucket, File } from "@google-cloud/storage";
 
@@ -18,9 +17,14 @@ class UploadService {
   private bucket: Bucket;
 
   constructor() {
+    const serviceAccount: { client_email: string; private_key: string } =
+      JSON.parse(ENV.GCS_SERVICE_ACCOUNT);
     this.storage = new Storage({
       projectId: ENV.GCLOUD_PROJECT_ID,
-      keyFilename: path.resolve("src/config/gcs.json"),
+      credentials: {
+        client_email: serviceAccount.client_email,
+        private_key: serviceAccount.private_key.replace(/\\n/g, "\n"),
+      },
     });
     this.bucket = this.storage.bucket(ENV.GCLOUD_BUCKET_NAME);
   }
