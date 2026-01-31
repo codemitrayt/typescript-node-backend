@@ -12,14 +12,4 @@ export const ERROR_MESSAGES = {
   PERMISSION_DENIED: "You are not allowed to perform this action",
 };
 
-//TODO: remove this when getting from db
-export const DUMMY_USER = {
-  id: "1",
-  email: "dummy@dummy.com",
-  displayName: "Jon Doe",
-  firstName: "Jon",
-  lastName: "Doe",
-  image: "http://image.test-image.png",
-  provider: "google",
-  role: UserRole.USER,
-};
+export const AvailableUserRole: string[] = Object.values(UserRole);

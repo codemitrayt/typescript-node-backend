@@ -5,7 +5,7 @@ import {
   VerifyCallback,
 } from "passport-google-oauth20";
 
-import { ENV } from "./env.configs";
+import { ENV } from "./env.config";
 import { User, UserRole } from "../types/user.types";
 
 passport.use(
@@ -24,14 +24,14 @@ passport.use(
     ) => {
       try {
         const user: User = {
-          id: profile.id,
+          _id: profile.id,
           email: profile.emails?.[0]?.value || "",
-          displayName: profile.displayName,
-          firstName: profile.name?.givenName || "",
-          lastName: profile.name?.familyName || "",
-          image: profile.photos?.[0]?.value || "",
-          provider: profile.provider,
+          fullName: profile.displayName,
+          avatar: {
+            url: profile.photos?.[0]?.value || "",
+          },
           role: UserRole.USER,
+          password: "test@123",
         };
         return done(null, user);
       } catch (error) {

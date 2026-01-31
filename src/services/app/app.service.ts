@@ -2,11 +2,12 @@ import cors from "cors";
 import session from "express-session";
 import express, { Response, Request, Application } from "express";
 
-import { ENV } from "../../configs";
+import { ENV } from "../../config";
 import { logger } from "../../logger";
-import { NODE_ENV } from "../../constants";
-import { authRouter } from "../../routers";
-import { errorHandler } from "../../middlewares";
+import { connectMongoDB } from "../../db";
+import { authRouter } from "../../routes";
+import { NODE_ENV } from "../../constant";
+import { errorHandler } from "../../middleware";
 
 class AppService {
   private app: Application;
@@ -58,9 +59,11 @@ class AppService {
     this.app.use(errorHandler);
   }
 
-  start() {
+  async start() {
     const PORT = ENV.APP_PORT || 5500;
     try {
+      await connectMongoDB();
+      logger.info({ msg: "MongoDB connected successfully" });
       this.app.listen(PORT, () =>
         logger.info({ msg: `Server listening on http://localhost:${PORT}` }),
       );
@@ -76,4 +79,4 @@ class AppService {
   }
 }
 
-export { AppService };
+export default AppService;
