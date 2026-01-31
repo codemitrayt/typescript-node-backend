@@ -23,7 +23,7 @@ passport.use(
       done: VerifyCallback,
     ) => {
       try {
-        const user: User = {
+        const user: Express.User = {
           _id: profile.id,
           email: profile.emails?.[0]?.value || "",
           fullName: profile.displayName,

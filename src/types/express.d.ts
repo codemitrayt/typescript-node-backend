@@ -12,7 +12,7 @@ declare module "express-session" {
 declare global {
   namespace Express {
     interface User extends UserType {
-      id: string;
+      _id: string;
     }
   }
 }
