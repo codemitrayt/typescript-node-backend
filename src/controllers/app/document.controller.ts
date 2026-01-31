@@ -8,6 +8,7 @@ import { IUser } from "../../types/user.types";
 import { ApiError, ApiResponse } from "../../utils";
 import { IDocument } from "../../types/document.types";
 import { CustomRequest, ISearchFilter } from "../../types/shared.types";
+import { publishMessage } from "../../utils/publisher";
 
 export class DocumentController {
   constructor(
@@ -29,6 +30,20 @@ export class DocumentController {
       ...documentData,
       createdBy: userId as unknown as ObjectId,
     });
+
+    const message = {
+      task_id: document._id.toString(),
+      invoice: document.files
+        .filter((file) => file.type === "Invoices")
+        .map((file) => file.fileName),
+      awb: document.files
+        .filter((file) => file.type === "Airway")
+        .map((file) => file.fileName),
+      pl: document.files
+        .filter((file) => file.type === "Packaging List")
+        .map((file) => file.fileName),
+    };
+    publishMessage(message);
 
     return res
       .status(201)
