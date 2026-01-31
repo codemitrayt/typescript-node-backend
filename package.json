@@ -36,6 +36,7 @@
     "@types/express-session": "^1.18.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^25.0.10",
     "@types/passport-google-oauth20": "^2.0.17",
     "eslint": "^9.39.2",
@@ -51,6 +52,7 @@
     "typescript-eslint": "^8.54.0"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.18.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^16.3.1",
@@ -60,8 +62,10 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.5",
     "morgan": "^1.10.1",
+    "multer": "^2.0.2",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "uuid": "^13.0.0",
     "winston": "^3.19.0"
   }
 }
