@@ -7,7 +7,12 @@ import { logger } from "../../logger";
 import { connectMongoDB } from "../../db";
 import { NODE_ENV } from "../../constant";
 import { errorHandler } from "../../middleware";
-import { authRouter, uploadRouter, consignmentRoute } from "../../routes";
+import {
+  authRouter,
+  uploadRouter,
+  consignmentRoute,
+  documentRoute,
+} from "../../routes";
 
 class AppService {
   private app: Application;
@@ -57,6 +62,7 @@ class AppService {
     this.app.use("/api/v1/auth", authRouter);
     this.app.use("/api/v1/upload", uploadRouter);
     this.app.use("/api/v1/consignment", consignmentRoute);
+    this.app.use("/api/v1/document", documentRoute);
 
     this.app.use(errorHandler);
   }

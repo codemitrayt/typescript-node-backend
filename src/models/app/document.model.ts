@@ -24,6 +24,10 @@ const filesSchema = new Schema<CustomModel<IDocumentFile>>({
     type: String,
     required: [true, "File stored bucket is required"],
   },
+  type: {
+    type: String,
+    required: [true, "File type bucket is required"],
+  },
 });
 
 const documentSchema = new Schema<CustomModel<IDocument>>(
@@ -32,6 +36,11 @@ const documentSchema = new Schema<CustomModel<IDocument>>(
       type: Schema.Types.ObjectId,
       ref: "Consignment",
       require: [true, "Consignment ID is required"],
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      require: [true, "Creator ID is required"],
     },
     files: {
       type: [filesSchema],

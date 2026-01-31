@@ -6,6 +6,7 @@ export interface IDocumentFile {
   contentType: string;
   size: number;
   bucket: string;
+  type: string;
 }
 
 export interface IDocument {
@@ -15,4 +16,5 @@ export interface IDocument {
   status: string;
   isDeleted?: boolean;
   data?: object | null;
+  createdBy: ObjectId;
 }
