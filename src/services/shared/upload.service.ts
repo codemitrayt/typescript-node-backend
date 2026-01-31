@@ -1,4 +1,4 @@
-import { v4 as uuid } from "uuid";
+import { v4 } from "uuid";
 import { Storage, Bucket, File } from "@google-cloud/storage";
 
 import { ENV } from "../../config";
@@ -99,8 +99,8 @@ class UploadService {
       }
 
       const fileName: string = folder
-        ? `${folder}/${uuid()}_${file.originalname}`
-        : `${uuid()}_${file.originalname}`;
+        ? `${folder}/${v4()}_${file.originalname}`
+        : `${v4()}_${file.originalname}`;
 
       const blob: File = this.bucket.file(fileName);
       const blobStream = blob.createWriteStream({
