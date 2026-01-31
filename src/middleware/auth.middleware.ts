@@ -5,7 +5,7 @@ import { ENV } from "../config";
 import { logger } from "../logger";
 import { UserModel } from "../models";
 import { ApiError, asyncHandler } from "../utils";
-import { User, UserRole } from "../types/user.types";
+import { IUser, UserRole } from "../types/user.types";
 import { ERROR_MESSAGES, NODE_ENV } from "../constant";
 import { CustomJwtPayload, CustomRequest } from "../types/shared.types";
 
@@ -96,7 +96,7 @@ export const verifyPermission = (roles: UserRole[] = []) =>
       if (!req.user) {
         throw new ApiError(401, ERROR_MESSAGES.UNAUTHORIZED_REQUEST);
       }
-      const user = req.user as User;
+      const user = req.user as IUser;
       if (!user?.role || !roles.includes(user?.role)) {
         throw new ApiError(403, ERROR_MESSAGES.PERMISSION_DENIED);
       }

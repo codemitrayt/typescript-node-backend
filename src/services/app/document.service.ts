@@ -1,27 +1,27 @@
 import { SortOrder, UpdateQuery } from "mongoose";
 
-import { UserModel } from "../../models";
-import { Filter } from "../../types/shared.types";
-import { IUser, IUserFilter } from "../../types/user.types";
+import { DocumentModel } from "../../models";
+import { IDocument } from "../../types/document.types";
+import { Filter, ISearchFilter } from "../../types/shared.types";
 
-class UserService {
-  constructor(private model: typeof UserModel) {}
+class DocumentService {
+  constructor(private model: typeof DocumentModel) {}
 
-  async create(userData: Partial<IUser>): Promise<IUser> {
-    const user = new this.model(userData);
-    const savedUser = await user.save();
-    return savedUser.toObject();
+  async create(consignmentData: Partial<IDocument>) {
+    const document = new this.model(consignmentData);
+    const savedConsignment = await document.save();
+    return savedConsignment.toObject();
   }
 
-  async getById(id: string): Promise<IUser | null> {
+  async getById(id: string): Promise<IDocument | null> {
     return await this.model.findById(id).lean();
   }
 
-  async getOne(filter: Record<string, unknown>): Promise<IUser | null> {
+  async getOne(filter: Record<string, unknown>): Promise<IDocument | null> {
     return await this.model.findOne(filter).lean();
   }
 
-  async list(filters: IUserFilter = {}) {
+  async list(filters: ISearchFilter = {}) {
     const {
       page = 1,
       limit = 10,
@@ -37,14 +37,11 @@ class UserService {
 
     const searchQuery: Filter = search
       ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-          ],
+          $or: [{ title: { $regex: search, $options: "i" } }],
         }
       : {};
 
-    const [users, total] = await Promise.all([
+    const [consignments, total] = await Promise.all([
       this.model
         .find(searchQuery)
         .sort(sortOptions)
@@ -55,7 +52,7 @@ class UserService {
     ]);
 
     return {
-      data: users,
+      data: consignments,
       pagination: {
         total,
         page,
@@ -67,14 +64,14 @@ class UserService {
     };
   }
 
-  async getAll(filter: Filter = {}): Promise<IUser[]> {
+  async getAll(filter: Filter = {}): Promise<IDocument[]> {
     return await this.model.find(filter).lean();
   }
 
   async updateById(
     id: string,
-    updateData: UpdateQuery<IUser>,
-  ): Promise<IUser | null> {
+    updateData: UpdateQuery<IDocument>,
+  ): Promise<IDocument | null> {
     return await this.model
       .findByIdAndUpdate(id, updateData, {
         new: true,
@@ -85,8 +82,8 @@ class UserService {
 
   async updateOne(
     filter: Filter,
-    updateData: UpdateQuery<IUser>,
-  ): Promise<IUser | null> {
+    updateData: UpdateQuery<IDocument>,
+  ): Promise<IDocument | null> {
     return await this.model
       .findOneAndUpdate(filter, updateData, {
         new: true,
@@ -95,7 +92,7 @@ class UserService {
       .lean();
   }
 
-  async updateMany(filter: Filter, updateData: UpdateQuery<IUser>) {
+  async updateMany(filter: Filter, updateData: UpdateQuery<IDocument>) {
     const result = await this.model.updateMany(filter, updateData, {
       runValidators: true,
     });
@@ -106,11 +103,11 @@ class UserService {
     };
   }
 
-  async deleteById(id: string): Promise<IUser | null> {
+  async deleteById(id: string): Promise<IDocument | null> {
     return await this.model.findByIdAndDelete(id).lean();
   }
 
-  async deleteOne(filter: Filter): Promise<IUser | null> {
+  async deleteOne(filter: Filter): Promise<IDocument | null> {
     return await this.model.findOneAndDelete(filter).lean();
   }
 
@@ -126,15 +123,10 @@ class UserService {
     return count > 0;
   }
 
-  async count(filter: Filter = {}): Promise<number> {
-    const count = await this.model.countDocuments(filter);
-    return count;
-  }
-
-  async bulkCreate(users: Partial<IUser>[]): Promise<IUser[]> {
-    const createdUsers = await this.model.insertMany(users);
-    return createdUsers.map((user) => user.toObject());
+  async bulkCreate(document: Partial<IDocument>[]): Promise<IDocument[]> {
+    const data = await this.model.insertMany(document);
+    return data.map((user) => user.toObject());
   }
 }
 
-export default UserService;
+export default DocumentService;

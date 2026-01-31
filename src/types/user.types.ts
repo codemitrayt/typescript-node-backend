@@ -8,7 +8,7 @@ export interface Avatar {
   url: string;
 }
 
-export interface User {
+export interface IUser {
   _id: string;
   fullName: string;
   email: string;

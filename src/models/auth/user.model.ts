@@ -1,9 +1,9 @@
 import { Model, model, Schema } from "mongoose";
 import { AvailableUserRole } from "../../constant";
 import { CustomModel } from "../../types/shared.types";
-import { User, UserRole } from "../../types/user.types";
+import { IUser, UserRole } from "../../types/user.types";
 
-const userShecma = new Schema<CustomModel<User>>(
+const userShecma = new Schema<CustomModel<IUser>>(
   {
     fullName: { type: String, require: [true, "Full name is required"] },
     email: {
@@ -20,7 +20,7 @@ const userShecma = new Schema<CustomModel<User>>(
   { timestamps: true, versionKey: false },
 );
 
-export const UserModel: Model<CustomModel<User>> = model<CustomModel<User>>(
+export const UserModel: Model<CustomModel<IUser>> = model<CustomModel<IUser>>(
   "User",
   userShecma,
   "users",

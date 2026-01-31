@@ -4,7 +4,7 @@ import { ApiError, ApiResponse } from "../../utils";
 import { CustomRequest } from "../../types/shared.types";
 import { HashService, TokenService, UserService } from "../../services";
 import {
-  User,
+  IUser,
   ILoginRequestBody,
   IVerifyRequestBody,
 } from "../../types/user.types";
@@ -17,7 +17,7 @@ export class AuthController {
     private logger: Logger,
   ) {}
 
-  private _buildUserResponse(user: User, token: string) {
+  private _buildUserResponse(user: IUser, token: string) {
     return {
       user: {
         _id: user._id,
@@ -30,8 +30,8 @@ export class AuthController {
     };
   }
 
-  async register(req: CustomRequest<User>, res: Response) {
-    const { email, _id: adminUserId } = req.user as User;
+  async register(req: CustomRequest<IUser>, res: Response) {
+    const { email, _id: adminUserId } = req.user as IUser;
     const userData = req.body;
 
     this.logger.info({
@@ -135,8 +135,8 @@ export class AuthController {
       );
   }
 
-  async create(req: CustomRequest<User>, res: Response) {
-    const { email, _id: adminUserId } = req.user as User;
+  async create(req: CustomRequest<IUser>, res: Response) {
+    const { email, _id: adminUserId } = req.user as IUser;
     const userData = req.body;
 
     this.logger.info({

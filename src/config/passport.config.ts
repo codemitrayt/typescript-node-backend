@@ -6,7 +6,7 @@ import {
 } from "passport-google-oauth20";
 
 import { ENV } from "./env.config";
-import { User, UserRole } from "../types/user.types";
+import { IUser, UserRole } from "../types/user.types";
 
 passport.use(
   new GoogleStrategy(
