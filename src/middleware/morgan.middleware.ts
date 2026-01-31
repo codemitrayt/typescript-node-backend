@@ -1,8 +1,8 @@
 import morgan from "morgan";
 
-import { ENV } from "../configs";
+import { ENV } from "../config";
 import { logger } from "../logger";
-import { NODE_ENV } from "../constants";
+import { NODE_ENV } from "../constant";
 
 const stream = {
   write: (message: string) => logger.http(message.trim()),

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ENV } from "../configs";
+import { ENV } from "../config";
 import { logger } from "../logger";
 import { ApiError } from "../utils";
-import { ERROR_MESSAGES, NODE_ENV } from "../constants";
+import { ERROR_MESSAGES, NODE_ENV } from "../constant";
 
 export const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
