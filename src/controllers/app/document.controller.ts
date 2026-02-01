@@ -35,13 +35,22 @@ export class DocumentController {
       task_id: document._id.toString(),
       invoice: document.files
         .filter((file) => file.type === "Invoices")
-        .map((file) => file.fileName),
+        .map(
+          (file) =>
+            `https://storage.googleapis.com/exportkaro/${file.fileName}`,
+        ),
       awb: document.files
         .filter((file) => file.type === "Airway")
-        .map((file) => file.fileName),
+        .map(
+          (file) =>
+            `https://storage.googleapis.com/exportkaro/${file.fileName}`,
+        ),
       pl: document.files
         .filter((file) => file.type === "Packaging List")
-        .map((file) => file.fileName),
+        .map(
+          (file) =>
+            `https://storage.googleapis.com/exportkaro/${file.fileName}`,
+        ),
     };
     publishMessage(message);
 
