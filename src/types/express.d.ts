@@ -1,5 +1,5 @@
 import "express-session";
-import { User as UserType } from "./user.types";
+import { IUser as UserType } from "./user.types";
 
 declare module "express-session" {
   interface SessionData {

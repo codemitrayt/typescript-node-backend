@@ -68,3 +68,11 @@ export interface IBulkSignedUrlResult {
   url: string;
   error?: string;
 }
+
+export interface ISearchFilter {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  search?: string;
+}
