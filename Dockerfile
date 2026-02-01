@@ -4,14 +4,14 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --production
+RUN npm install --production --ignore-scripts
 
 COPY . .
 
 EXPOSE 5555
 
 ENV NODE_ENV=production
-ENV PORT=5555
+ENV APP_PORT=5555
 
 
 CMD ["npm", "run", "start"]
