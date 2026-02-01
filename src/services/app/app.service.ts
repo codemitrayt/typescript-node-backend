@@ -43,6 +43,7 @@ class AppService {
     });
 
     this.app.options("*", cors(corsOption));
+    this.app.use(cors(corsOption));
     this.app.use(sessionOptions);
     this.app.use(express.json());
     this.app.use(express.static("public"));
