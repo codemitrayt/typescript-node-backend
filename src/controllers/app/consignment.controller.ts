@@ -2,7 +2,7 @@ import { Logger } from "winston";
 import { Response } from "express";
 import { ObjectId } from "mongoose";
 
-import { ConsignmentService } from "../../services";
+import { ConsignmentService, DocumentService } from "../../services";
 
 import { IUser } from "../../types/user.types";
 import { ApiError, ApiResponse } from "../../utils";
@@ -12,6 +12,7 @@ import { CustomRequest, ISearchFilter } from "../../types/shared.types";
 export class ConsignmentController {
   constructor(
     private consignmentService: ConsignmentService,
+    private documentService: DocumentService,
     private logger: Logger,
   ) {}
 
@@ -119,6 +120,33 @@ export class ConsignmentController {
       .status(200)
       .json(
         new ApiResponse(200, consignment, "Consignment fetched successfully"),
+      );
+  }
+
+  async documentList(req: CustomRequest, res: Response) {
+    const { email } = req.user as IUser;
+    const { consignmentId } = req.params as { consignmentId: string };
+    const { page, limit } = req.query as unknown as {
+      page: number;
+      limit: number;
+    };
+
+    this.logger.info({ msg: "Consignment document list", email });
+
+    const documentList = await this.documentService.documentList({
+      consignmentId,
+      isDeleted: false,
+      page,
+      limit,
+    });
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          documentList,
+          "Consignment document list fetched successfully",
+        ),
       );
   }
 }

@@ -1,4 +1,4 @@
-import { SortOrder, UpdateQuery } from "mongoose";
+import mongoose, { SortOrder, UpdateQuery } from "mongoose";
 
 import { DocumentModel } from "../../models";
 import { IDocument } from "../../types/document.types";
@@ -126,6 +126,46 @@ class DocumentService {
   async bulkCreate(document: Partial<IDocument>[]): Promise<IDocument[]> {
     const data = await this.model.insertMany(document);
     return data.map((user) => user.toObject());
+  }
+
+  async documentList(filters: Filter) {
+    const page = parseInt(filters.page as string) || 1;
+    const limit = parseInt(filters.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const matchQuery: Record<string, unknown> = {
+      consignmentId: new mongoose.Types.ObjectId(
+        filters.consignmentId as string,
+      ),
+      isDeleted: filters.isDeleted,
+    };
+
+    const [data, totalCount] = await Promise.all([
+      this.model
+        .aggregate([
+          { $match: matchQuery },
+          { $skip: skip },
+          { $limit: limit },
+          { $project: { files: 1, consignmentId: 1 } },
+        ])
+        .exec(),
+      this.model.countDocuments(matchQuery),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const response = {
+      data,
+      pagination: {
+        totalCount,
+        totalPages,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
+
+    return response;
   }
 }
 
