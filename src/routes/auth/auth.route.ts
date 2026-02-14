@@ -4,12 +4,12 @@ import { UserService } from "../../services/app/user.service";
 import { TokenService } from "../../services/shared/token.service";
 import { HashService } from "../../services/shared/hash.service";
 
+import { User } from "../../entities";
 import { logger } from "../../logger";
-import { UserModel } from "../../models";
 import { asyncHandler } from "../../utils";
-import { ENV, passport } from "../../config";
 import { UserRole } from "../../types/user.types";
 import { AuthController } from "../../controllers";
+import { AppDataSource, ENV, passport } from "../../config";
 import { validate, verifyJWT, verifyPermission } from "../../middleware";
 import {
   createUserValidator,
@@ -22,7 +22,8 @@ const authRouter: Router = Router();
 // Service instances
 const hasService = new HashService();
 const tokenService = new TokenService();
-const userService = new UserService(UserModel);
+const userRepository = AppDataSource.getRepository(User);
+const userService = new UserService(userRepository);
 const authController = new AuthController(
   userService,
   tokenService,

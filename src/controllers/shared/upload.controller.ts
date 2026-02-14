@@ -2,13 +2,13 @@ import { Logger } from "winston";
 import { Response } from "express";
 
 import { UploadService } from "../../services";
-import { IUser } from "../../types/user.types";
 import {
   IBulkUploadResult,
   CustomRequest,
   IBulkSignedUrlResult,
 } from "../../types/shared.types";
 import { ENV } from "../../config";
+import { User } from "../../entities";
 
 export class UploadController {
   constructor(
@@ -17,7 +17,7 @@ export class UploadController {
   ) {}
 
   async uploadSingleFile(req: CustomRequest, res: Response): Promise<void> {
-    const { _id: userId, email } = req.user as IUser;
+    const { id: userId, email } = req.user as unknown as User;
     this.logger.info({ msg: "Upload single file", userId, email });
 
     const file = req.file;
@@ -48,7 +48,7 @@ export class UploadController {
   }
 
   async bulkUploadSequential(req: CustomRequest, res: Response): Promise<void> {
-    const { email } = req.user as IUser;
+    const { email } = req.user as unknown as User;
     this.logger.info({ msg: "Bulk upload sequential", email });
 
     const files = req.files as Express.Multer.File[];
@@ -81,7 +81,7 @@ export class UploadController {
   }
 
   async bulkUploadParallel(req: CustomRequest, res: Response): Promise<void> {
-    const { email } = req.user as IUser;
+    const { email } = req.user as unknown as User;
     this.logger.info({ msg: "Bulk upload parallel", email });
 
     const files = req.files as Express.Multer.File[];

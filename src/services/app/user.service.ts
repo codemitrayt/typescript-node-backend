@@ -1,58 +1,82 @@
-import { SortOrder, UpdateQuery } from "mongoose";
+import { Repository, FindOptionsWhere } from "typeorm";
 
-import { UserModel } from "../../models";
-import { Filter } from "../../types/shared.types";
-import { IUser, IUserFilter } from "../../types/user.types";
+import { User } from "../../entities";
+import { IUserFilter } from "../../types/user.types";
 
 export class UserService {
-  constructor(private model: typeof UserModel) {}
+  constructor(private repository: Repository<User>) {}
 
-  async create(userData: Partial<IUser>): Promise<IUser> {
-    const user = new this.model(userData);
-    const savedUser = await user.save();
-    return savedUser.toObject();
+  /* ---------------------------------------------------- */
+  /* CREATE */
+  /* ---------------------------------------------------- */
+
+  async create(userData: Partial<User>): Promise<User> {
+    const user = this.repository.create(userData);
+    return await this.repository.save(user);
   }
 
-  async getById(id: string): Promise<IUser | null> {
-    return await this.model.findById(id).lean();
+  async bulkCreate(users: Partial<User>[]): Promise<User[]> {
+    const entities = this.repository.create(users);
+    return await this.repository.save(entities);
   }
 
-  async getOne(filter: Record<string, unknown>): Promise<IUser | null> {
-    return await this.model.findOne(filter).lean();
+  /* ---------------------------------------------------- */
+  /* READ */
+  /* ---------------------------------------------------- */
+
+  async getById(id: string): Promise<User | null> {
+    return await this.repository.findOne({
+      where: { id },
+    });
   }
+
+  async getOne(filter: FindOptionsWhere<User>): Promise<User | null> {
+    return await this.repository.findOne({
+      where: filter,
+    });
+  }
+
+  async getAll(filter: FindOptionsWhere<User> = {}): Promise<User[]> {
+    return await this.repository.find({
+      where: filter,
+    });
+  }
+
+  /* ---------------------------------------------------- */
+  /* LIST (Pagination + Search + Sort) */
+  /* ---------------------------------------------------- */
 
   async list(filters: IUserFilter = {}) {
     const {
       page = 1,
       limit = 10,
       sortBy = "createdAt",
-      sortOrder = "desc",
+      sortOrder = "DESC",
       search = "",
     } = filters;
 
     const skip = (page - 1) * limit;
-    const sortOptions: Record<string, SortOrder> = {
-      [sortBy]: sortOrder === "asc" ? 1 : -1,
-    };
 
-    const searchQuery: Filter = search
-      ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-          ],
-        }
-      : {};
+    const queryBuilder = this.repository.createQueryBuilder("user");
 
-    const [users, total] = await Promise.all([
-      this.model
-        .find(searchQuery)
-        .sort(sortOptions)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      this.model.countDocuments(searchQuery),
-    ]);
+    // Search (case-insensitive)
+    if (search) {
+      queryBuilder.andWhere(
+        "(user.fullName ILIKE :search OR user.email ILIKE :search)",
+        { search: `%${search}%` },
+      );
+    }
+
+    // Sorting
+    queryBuilder.orderBy(
+      `user.${sortBy}`,
+      sortOrder === "DESC" ? "DESC" : "ASC",
+    );
+
+    // Pagination
+    queryBuilder.skip(skip).take(limit);
+
+    const [users, total] = await queryBuilder.getManyAndCount();
 
     return {
       data: users,
@@ -67,72 +91,80 @@ export class UserService {
     };
   }
 
-  async getAll(filter: Filter = {}): Promise<IUser[]> {
-    return await this.model.find(filter).lean();
-  }
+  /* ---------------------------------------------------- */
+  /* UPDATE */
+  /* ---------------------------------------------------- */
 
   async updateById(
     id: string,
-    updateData: UpdateQuery<IUser>,
-  ): Promise<IUser | null> {
-    return await this.model
-      .findByIdAndUpdate(id, updateData, {
-        new: true,
-        runValidators: true,
-      })
-      .lean();
+    updateData: Partial<User>,
+  ): Promise<User | null> {
+    await this.repository.update(id, updateData);
+    return this.getById(id);
   }
 
   async updateOne(
-    filter: Filter,
-    updateData: UpdateQuery<IUser>,
-  ): Promise<IUser | null> {
-    return await this.model
-      .findOneAndUpdate(filter, updateData, {
-        new: true,
-        runValidators: true,
-      })
-      .lean();
+    filter: FindOptionsWhere<User>,
+    updateData: Partial<User>,
+  ): Promise<User | null> {
+    const user = await this.repository.findOne({ where: filter });
+    if (!user) return null;
+
+    Object.assign(user, updateData);
+    return await this.repository.save(user);
   }
 
-  async updateMany(filter: Filter, updateData: UpdateQuery<IUser>) {
-    const result = await this.model.updateMany(filter, updateData, {
-      runValidators: true,
+  async updateMany(filter: FindOptionsWhere<User>, updateData: Partial<User>) {
+    const result = await this.repository.update(filter, updateData);
+
+    return {
+      matchedCount: result.affected ?? 0,
+      modifiedCount: result.affected ?? 0,
+    };
+  }
+
+  /* ---------------------------------------------------- */
+  /* DELETE */
+  /* ---------------------------------------------------- */
+
+  async deleteById(id: string): Promise<User | null> {
+    const user = await this.getById(id);
+    if (!user) return null;
+
+    await this.repository.delete(id);
+    return user;
+  }
+
+  async deleteOne(filter: FindOptionsWhere<User>): Promise<User | null> {
+    const user = await this.repository.findOne({ where: filter });
+    if (!user) return null;
+
+    await this.repository.delete(user.id);
+    return user;
+  }
+
+  async deleteMany(filter: FindOptionsWhere<User>) {
+    const result = await this.repository.delete(filter);
+
+    return {
+      deletedCount: result.affected ?? 0,
+    };
+  }
+
+  /* ---------------------------------------------------- */
+  /* UTILITIES */
+  /* ---------------------------------------------------- */
+
+  async exists(filter: FindOptionsWhere<User>): Promise<boolean> {
+    const count = await this.repository.count({
+      where: filter,
     });
-
-    return {
-      matchedCount: result.matchedCount,
-      modifiedCount: result.modifiedCount,
-    };
-  }
-
-  async deleteById(id: string): Promise<IUser | null> {
-    return await this.model.findByIdAndDelete(id).lean();
-  }
-
-  async deleteOne(filter: Filter): Promise<IUser | null> {
-    return await this.model.findOneAndDelete(filter).lean();
-  }
-
-  async deleteMany(filter: Filter) {
-    const result = await this.model.deleteMany(filter);
-    return {
-      deletedCount: result.deletedCount,
-    };
-  }
-
-  async exists(filter: Filter): Promise<boolean> {
-    const count = await this.model.countDocuments(filter);
     return count > 0;
   }
 
-  async count(filter: Filter = {}): Promise<number> {
-    const count = await this.model.countDocuments(filter);
-    return count;
-  }
-
-  async bulkCreate(users: Partial<IUser>[]): Promise<IUser[]> {
-    const createdUsers = await this.model.insertMany(users);
-    return createdUsers.map((user) => user.toObject());
+  async count(filter: FindOptionsWhere<User> = {}): Promise<number> {
+    return await this.repository.count({
+      where: filter,
+    });
   }
 }

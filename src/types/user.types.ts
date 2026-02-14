@@ -9,13 +9,14 @@ export interface Avatar {
 }
 
 export interface IUser {
-  _id: string;
+  id: string;
   fullName: string;
   email: string;
   avatar: Avatar;
-  password: string;
+  password: string | null;
   role?: UserRole;
   isVerified?: boolean;
+  loginType: ILoginType;
 }
 
 export interface IUserFilter {
@@ -33,4 +34,9 @@ export interface ILoginRequestBody {
 
 export interface IVerifyRequestBody {
   token: string;
+}
+
+export enum ILoginType {
+  GOOGLE = "GOOGLE",
+  EMAIL_PASSWORD = "EMAIL_PASSWORD",
 }

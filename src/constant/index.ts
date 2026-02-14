@@ -1,4 +1,4 @@
-import { UserRole } from "../types/user.types";
+import { ILoginType, UserRole } from "../types/user.types";
 
 export const NODE_ENV = {
   DEVELOPMENT: "development",
@@ -13,3 +13,4 @@ export const ERROR_MESSAGES = {
 };
 
 export const AvailableUserRole: string[] = Object.values(UserRole);
+export const AvailableLoginType: string[] = Object.values(ILoginType);

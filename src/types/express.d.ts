@@ -1,5 +1,5 @@
 import "express-session";
-import { IUser as UserType } from "./user.types";
+import { IUser } from "./user.types";
 
 declare module "express-session" {
   interface SessionData {
@@ -11,8 +11,8 @@ declare module "express-session" {
 
 declare global {
   namespace Express {
-    interface User extends UserType {
-      _id: string;
+    interface User extends IUser {
+      id: string;
     }
   }
 }

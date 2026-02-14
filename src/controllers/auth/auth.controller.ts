@@ -1,13 +1,10 @@
 import { Logger } from "winston";
 import { Response } from "express";
+import { User } from "../../entities";
 import { ApiError, ApiResponse } from "../../utils";
 import { CustomRequest } from "../../types/shared.types";
 import { HashService, TokenService, UserService } from "../../services";
-import {
-  IUser,
-  ILoginRequestBody,
-  IVerifyRequestBody,
-} from "../../types/user.types";
+import { ILoginRequestBody, IVerifyRequestBody } from "../../types/user.types";
 
 export class AuthController {
   constructor(
@@ -17,10 +14,10 @@ export class AuthController {
     private logger: Logger,
   ) {}
 
-  private _buildUserResponse(user: IUser, token: string) {
+  private _buildUserResponse(user: User, token: string) {
     return {
       user: {
-        _id: user._id,
+        id: user.id,
         email: user.email,
         fullName: user.fullName,
         avatar: user.avatar,
@@ -30,8 +27,8 @@ export class AuthController {
     };
   }
 
-  async register(req: CustomRequest<IUser>, res: Response) {
-    const { email, _id: adminUserId } = req.user as IUser;
+  async register(req: CustomRequest<User>, res: Response) {
+    const { email, id: adminUserId } = req.user as unknown as User;
     const userData = req.body;
 
     this.logger.info({
@@ -58,7 +55,7 @@ export class AuthController {
       .json(
         new ApiResponse(
           200,
-          { userId: createdUser._id },
+          { userId: createdUser.id },
           "Registration successful. Awaiting admin approval.",
         ),
       );
@@ -86,7 +83,7 @@ export class AuthController {
     }
 
     const accessToken = await this.tokenService.signToken({
-      user: { _id: user._id },
+      user: { id: user.id },
     });
 
     return res
@@ -110,17 +107,17 @@ export class AuthController {
       throw new ApiError(400, "Invalid or expired token.");
     }
 
-    const user = await this.userService.getById(decodedToken.user._id);
+    const user = await this.userService.getById(decodedToken.user.id);
     if (!user) {
       throw new ApiError(404, "User not found.");
     }
 
-    await this.userService.updateById(decodedToken.user._id, {
+    await this.userService.updateById(decodedToken.user.id, {
       isVerified: true,
     });
 
     const accessToken = await this.tokenService.signToken({
-      user: { _id: user._id },
+      user: { id: user.id },
       exp: "10d",
     });
 
@@ -135,8 +132,8 @@ export class AuthController {
       );
   }
 
-  async create(req: CustomRequest<IUser>, res: Response) {
-    const { email, _id: adminUserId } = req.user as IUser;
+  async create(req: CustomRequest<User>, res: Response) {
+    const { email, id: adminUserId } = req.user as unknown as User;
     const userData = req.body;
 
     this.logger.info({

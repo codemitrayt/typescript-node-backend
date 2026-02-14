@@ -5,7 +5,7 @@ import { Document } from "mongoose";
 export type CustomModel<T> = T & Document;
 
 export interface CustomJwtPayload extends JwtPayload {
-  user: { _id: string };
+  user: { id: string };
 }
 
 export interface CustomRequest<T = null> extends Request {
@@ -14,8 +14,6 @@ export interface CustomRequest<T = null> extends Request {
 }
 
 export type Filter = Record<string, unknown>;
-
-// Add to your existing shared.types.ts file
 
 export interface IFileMetadata {
   fileName: string;

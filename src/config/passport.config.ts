@@ -6,7 +6,7 @@ import {
 } from "passport-google-oauth20";
 
 import { ENV } from "./env.config";
-import { IUser, UserRole } from "../types/user.types";
+import { IUser, UserRole, ILoginType } from "../types/user.types";
 
 passport.use(
   new GoogleStrategy(
@@ -24,14 +24,16 @@ passport.use(
     ) => {
       try {
         const user: Express.User = {
-          _id: profile.id,
+          id: profile.id,
           email: profile.emails?.[0]?.value || "",
           fullName: profile.displayName,
           avatar: {
             url: profile.photos?.[0]?.value || "",
           },
           role: UserRole.USER,
-          password: "test@123",
+          isVerified: false,
+          password: null,
+          loginType: ILoginType.GOOGLE,
         };
         return done(null, user);
       } catch (error) {

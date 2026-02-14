@@ -4,7 +4,6 @@ import express, { Response, Request, Application } from "express";
 
 import { ENV } from "../../config";
 import { logger } from "../../logger";
-import { connectMongoDB } from "../../db";
 import { NODE_ENV } from "../../constant";
 import { errorHandler } from "../../middleware";
 import { authRouter, uploadRouter } from "../../routes";
@@ -64,10 +63,8 @@ export class AppService {
   async start() {
     const PORT = ENV.APP_PORT || 5500;
     try {
-      await connectMongoDB();
-      logger.info({ msg: "MongoDB connected successfully" });
       this.app.listen(PORT, () =>
-        logger.info({ msg: `Server listening on http://localhost:${PORT}` }),
+        logger.info(`Server listening on http://localhost:${PORT}`),
       );
     } catch (error) {
       if (error instanceof Error) {

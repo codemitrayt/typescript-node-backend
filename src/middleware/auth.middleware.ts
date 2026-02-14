@@ -1,13 +1,16 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Response, Request } from "express";
 
-import { ENV } from "../config";
+import { User } from "../entities";
 import { logger } from "../logger";
 import { UserModel } from "../models";
+import { AppDataSource, ENV } from "../config";
 import { ApiError, asyncHandler } from "../utils";
 import { IUser, UserRole } from "../types/user.types";
 import { ERROR_MESSAGES, NODE_ENV } from "../constant";
 import { CustomJwtPayload, CustomRequest } from "../types/shared.types";
+
+const userRepository = AppDataSource.getRepository(User);
 
 // Helper function to extract token from request
 const extractToken = (req: Request): string | undefined => {
@@ -24,7 +27,7 @@ const verifyToken = (token: string): CustomJwtPayload => {
 
 // Helper function to validate user from decoded token
 const validateDecodedUser = (decodedToken: CustomJwtPayload): void => {
-  if (!decodedToken.user?._id) {
+  if (!decodedToken.user?.id) {
     throw new ApiError(401, ERROR_MESSAGES.INVALID_JWT_TOKEN);
   }
 };
@@ -41,13 +44,15 @@ export const verifyJWT = asyncHandler(
       const decodedToken = verifyToken(token);
       validateDecodedUser(decodedToken);
 
-      const user = await UserModel.findById(decodedToken.user._id);
+      const user = await userRepository.findOne({
+        where: { id: decodedToken.user.id },
+      });
 
       if (!user) {
         throw new ApiError(401, ERROR_MESSAGES.INVALID_JWT_TOKEN);
       }
 
-      req.user = user;
+      req.user = user as unknown as IUser;
       next();
     } catch (error: unknown) {
       const errorMessage =
@@ -71,7 +76,7 @@ export const getLoggedInUserOrIgnore = asyncHandler(
     try {
       const decodedToken = verifyToken(token);
 
-      if (!decodedToken?.user?._id) {
+      if (!decodedToken?.user?.id) {
         return next();
       }
 

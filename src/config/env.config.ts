@@ -33,6 +33,17 @@ const {
   ACCESS_TOKEN_SECRET = "DEFAULT_ACCESS_TOKEN_SECRET",
 
   MONGODB_URL = "mongodb://localhost:27017/mongodb-test",
+
+  DB_HOST = "localhost",
+  DB_PORT = "5435",
+  DB_NAME = "pg-test",
+  DB_USER = "postgres",
+  DB_PASSWORD = "postgres",
+  DB_MAX_CONNECTIONS = "20",
+  DB_IDLE_TIMEOUT = "30000",
+  DB_CONNECTION_TIMEOUT = "2000",
+  DATABASE_URL = "",
+  DB_SSL = "false",
 } = process.env;
 
 const ENV = {
@@ -67,6 +78,17 @@ const ENV = {
   ACCESS_TOKEN_SECRET,
 
   MONGODB_URL,
+
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
+  DB_MAX_CONNECTIONS,
+  DB_IDLE_TIMEOUT,
+  DB_CONNECTION_TIMEOUT,
+  DATABASE_URL,
+  DB_SSL,
 };
 
 export { ENV };
