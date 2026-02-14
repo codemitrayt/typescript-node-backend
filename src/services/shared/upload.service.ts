@@ -12,7 +12,7 @@ import {
   IBulkSignedUrlResult,
 } from "../../types/shared.types";
 
-class UploadService {
+export class UploadService {
   private storage: Storage;
   private bucket: Bucket;
 
@@ -451,5 +451,3 @@ class UploadService {
     return await Promise.all(existsPromises);
   }
 }
-
-export default UploadService;

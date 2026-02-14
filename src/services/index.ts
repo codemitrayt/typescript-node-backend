@@ -1,10 +1,8 @@
-import AppService from "./app/app.service";
-import UserService from "./app/user.service";
-import ConsignmentService from "./app/consignment.service";
-import DocumentService from "./app/document.service";
-export { AppService, UserService, ConsignmentService, DocumentService };
+export { AppService } from "./app/app.service";
+export { UserService } from "./app/user.service";
 
-import HashService from "./shared/hash.service";
-import TokenService from "./shared/token.service";
-import UploadService from "./shared/upload.service";
-export { HashService, TokenService, UploadService };
+export { HashService } from "./shared/hash.service";
+export { TokenService } from "./shared/token.service";
+// export { UploadService } from "./shared/upload.service";
+
+export * from "./shared/upload.service";

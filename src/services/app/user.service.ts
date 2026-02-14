@@ -4,7 +4,7 @@ import { UserModel } from "../../models";
 import { Filter } from "../../types/shared.types";
 import { IUser, IUserFilter } from "../../types/user.types";
 
-class UserService {
+export class UserService {
   constructor(private model: typeof UserModel) {}
 
   async create(userData: Partial<IUser>): Promise<IUser> {
@@ -136,5 +136,3 @@ class UserService {
     return createdUsers.map((user) => user.toObject());
   }
 }
-
-export default UserService;

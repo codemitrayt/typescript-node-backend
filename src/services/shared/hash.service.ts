@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-class HashService {
+export class HashService {
   async hashData(data: string): Promise<string> {
     const SALT = 10;
     return await bcrypt.hash(data, SALT);
@@ -10,5 +10,3 @@ class HashService {
     return await bcrypt.compare(data, hashData);
   }
 }
-
-export default HashService;

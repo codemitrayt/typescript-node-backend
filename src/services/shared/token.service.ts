@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { ENV } from "../../config";
 import { CustomJwtPayload } from "../../types/shared.types";
 
-class TokenService {
+export class TokenService {
   constructor() {}
 
   async signToken(payload: object, exp: string | number = "30d") {
@@ -17,5 +17,3 @@ class TokenService {
     return jwt.verify(token, ENV.ACCESS_TOKEN_SECRET) as CustomJwtPayload;
   }
 }
-
-export default TokenService;

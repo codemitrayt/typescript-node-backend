@@ -17,7 +17,7 @@ import {
   deleteFileValidator,
 } from "../../validators/upload.validator";
 
-import UploadService from "../../services/shared/upload.service";
+import { UploadService } from "../../services/shared/upload.service";
 
 const uploadRouter: Router = Router();
 

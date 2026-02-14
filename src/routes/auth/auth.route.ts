@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
 
-import UserService from "../../services/app/user.service";
-import TokenService from "../../services/shared/token.service";
-import HashService from "../../services/shared/hash.service";
+import { UserService } from "../../services/app/user.service";
+import { TokenService } from "../../services/shared/token.service";
+import { HashService } from "../../services/shared/hash.service";
 
 import { logger } from "../../logger";
 import { UserModel } from "../../models";
