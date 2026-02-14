@@ -3,7 +3,6 @@ import { NextFunction, Response, Request } from "express";
 
 import { User } from "../entities";
 import { logger } from "../logger";
-import { UserModel } from "../models";
 import { AppDataSource, ENV } from "../config";
 import { ApiError, asyncHandler } from "../utils";
 import { IUser, UserRole } from "../types/user.types";
@@ -80,13 +79,15 @@ export const getLoggedInUserOrIgnore = asyncHandler(
         return next();
       }
 
-      const user = await UserModel.findById(decodedToken.user_.id);
+      const user = await userRepository.findOne({
+        where: { id: decodedToken.user.id },
+      });
 
       if (!user) {
         return next();
       }
 
-      req.user = user;
+      req.user = user as unknown as IUser;
     } catch (error) {
       logger.error({ error });
     }
