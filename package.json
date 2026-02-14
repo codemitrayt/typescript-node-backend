@@ -13,7 +13,10 @@
     "format:check": "prettier --check \"src/**/*.ts\"",
     "type-check": "tsc --noEmit",
     "postinstall": "husky",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "npm run typeorm migration:generate -- -d src/config/data-source.config.ts",
+    "migration:run": "npm run typeorm migration:run -- -d src/config/data-source.config.ts"
   },
   "lint-staged": {
     "*.ts": [
@@ -49,7 +52,9 @@
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
+    "typeorm": "^0.3.28",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
   },
@@ -69,6 +74,8 @@
     "multer": "^2.0.2",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.18.0",
+    "reflect-metadata": "^0.2.2",
     "winston": "^3.19.0"
   }
 }
