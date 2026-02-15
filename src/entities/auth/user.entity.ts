@@ -5,16 +5,27 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
 
 import { AvailableLoginType, AvailableUserRole } from "../../constant";
 import { ILoginType, UserRole } from "../../types/user.types";
+import { Tenant } from "../app/tenant.entity";
+import { UUID } from "typeorm/driver/mongodb/bson.typings";
 
 @Entity("users")
 @Index(["email"], { unique: true })
 export class User {
   @PrimaryGeneratedColumn("uuid")
   declare id: string;
+
+  @Column({ type: "uuid", nullable: true, default: UUID })
+  declare tenantId: string;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.users, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "tenantId" })
+  declare tenant: Tenant;
 
   @Column({ unique: true })
   declare email: string;

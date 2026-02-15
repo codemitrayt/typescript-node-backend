@@ -27,12 +27,14 @@ export class UserService {
   async getById(id: string): Promise<User | null> {
     return await this.repository.findOne({
       where: { id },
+      relations: ["tenant"],
     });
   }
 
   async getOne(filter: FindOptionsWhere<User>): Promise<User | null> {
     return await this.repository.findOne({
       where: filter,
+      relations: ["tenant"],
     });
   }
 

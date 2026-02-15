@@ -22,6 +22,13 @@ export class AuthController {
         fullName: user.fullName,
         avatar: user.avatar,
         role: user.role,
+        tenant: {
+          id: user.tenant.id,
+          name: user.tenant.name,
+          websiteUrl: user.tenant.websiteUrl,
+          domain: user.tenant.domain,
+        },
+        lastActiveAt: user.lastActiveAt,
       },
       token,
     };

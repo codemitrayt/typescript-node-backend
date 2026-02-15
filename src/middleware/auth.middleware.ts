@@ -45,6 +45,7 @@ export const verifyJWT = asyncHandler(
 
       const user = await userRepository.findOne({
         where: { id: decodedToken.user.id },
+        relations: ["tenant"],
       });
 
       if (!user) {
