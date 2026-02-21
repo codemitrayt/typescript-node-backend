@@ -13,9 +13,9 @@ export enum MessageStatus {
 }
 
 export interface IMessageList {
-  limit: number;
   conversationId: string;
-  cursor?: string;
+  page: number;
+  limit: number;
 }
 
 export interface IMessage extends Document {

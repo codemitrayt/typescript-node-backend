@@ -24,13 +24,7 @@ export class MessageController {
       query,
     });
 
-    const cursor = query.cursor?.split("$");
-
-    const result = await this.messageService.getListByConversation({
-      ...query,
-      cursorCreatedAt: cursor?.[0],
-      cursorId: cursor?.[1],
-    });
+    const result = await this.messageService.getListByConversation(query);
 
     return res
       .status(200)

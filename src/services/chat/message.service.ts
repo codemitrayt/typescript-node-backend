@@ -34,63 +34,39 @@ export class MessageService {
     return await this.model.find(filter).lean();
   }
 
-  /* -------------------------------------------------------------------------- */
-  /*                      CURSOR-BASED PAGINATION (CHAT SAFE)                   */
-  /* -------------------------------------------------------------------------- */
-
-  async getListByConversation(params: {
+  async getListByConversation({
+    conversationId,
+    page,
+    limit,
+  }: {
     conversationId: string;
-    limit?: number;
-    cursorCreatedAt?: string;
-    cursorId?: string;
-  }): Promise<{
-    data: IMessage[];
-    nextCursor: string | null;
-  }> {
-    const { conversationId, limit = 20, cursorCreatedAt, cursorId } = params;
-
-    const query: Filter = {
-      conversationId,
-    };
-
-    // Cursor logic (stable pagination)
-    if (cursorCreatedAt && cursorId) {
-      query.$or = [
-        {
-          createdAt: {
-            $lt: new Date(cursorCreatedAt),
-          },
-        },
-        {
-          createdAt: new Date(cursorCreatedAt),
-          _id: { $lt: cursorId },
-        },
-      ];
-    }
+    page: number;
+    limit: number;
+  }) {
+    const skip = (page - 1) * limit;
 
     const messages = await this.model
-      .find(query)
-      .sort({ createdAt: -1, _id: -1 })
+      .find({ conversationId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
       .limit(limit)
-      .select({
-        _id: 1,
-        createdAt: 1,
-        conversationId: 1,
-        content: 1,
-      })
       .lean();
 
-    // Reverse to chronological order (oldest → newest)
-    const ordered = messages.reverse();
+    const totalCount = await this.model.countDocuments({
+      conversationId,
+    });
 
-    const nextCursor =
-      ordered.length > 0
-        ? `${ordered[0].createdAt.toISOString()}$${ordered[0]._id}`
-        : null;
+    const hasMore = skip + messages.length < totalCount;
 
     return {
-      data: ordered,
-      nextCursor,
+      messages,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        hasMore,
+        nextPage: hasMore ? page + 1 : null,
+      },
     };
   }
 }

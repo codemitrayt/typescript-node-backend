@@ -5,8 +5,8 @@ export const createMessageValidator = [
   body("conversationId")
     .exists({ checkFalsy: true })
     .withMessage("conversationId is required")
-    .isUUID()
-    .withMessage("conversationId must be a valid UUID"),
+    .isMongoId()
+    .withMessage("conversationId must be a valid ID"),
 
   body("role")
     .exists()
@@ -65,21 +65,16 @@ export const messageListValidator = [
   query("conversationId")
     .exists({ checkFalsy: true })
     .withMessage("conversationId is required")
-    .isUUID()
-    .withMessage("conversationId must be a valid UUID"),
+    .isMongoId()
+    .withMessage("conversationId must be a valid ID"),
 
   query("limit")
     .optional()
     .isInt({ min: 1, max: 100 })
     .withMessage("limit must be between 1 and 100"),
 
-  query("cursor")
+  query("page")
     .optional()
-    .isString()
-    .withMessage("cursor must be a valid ISO 8601 date string"),
-
-  query("direction")
-    .optional()
-    .isIn(["next", "prev"])
-    .withMessage("direction must be either 'next' or 'prev'"),
+    .isInt({ min: 1, max: 100 })
+    .withMessage("limit must be between 1 and 100"),
 ];
