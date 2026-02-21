@@ -7,12 +7,14 @@ import {
   Index,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
 } from "typeorm";
-
-import { AvailableLoginType, AvailableUserRole } from "../../constant";
-import { ILoginType, UserRole } from "../../types/user.types";
-import { Tenant } from "../app/tenant.entity";
 import { UUID } from "typeorm/driver/mongodb/bson.typings";
+
+import { Tenant } from "../app/tenant.entity";
+import { ILoginType, UserRole } from "../../types/user.types";
+import { Conversation } from "../chat/conversation.entity";
+import { AvailableLoginType, AvailableUserRole } from "../../constant";
 
 @Entity("users")
 @Index(["email"], { unique: true })
@@ -54,6 +56,9 @@ export class User {
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   declare lastActiveAt: Date;
+
+  @ManyToMany(() => Conversation, (conv) => conv.assignees)
+  declare assignee: Conversation[];
 
   @CreateDateColumn()
   declare createdAt: Date;

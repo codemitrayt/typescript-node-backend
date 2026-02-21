@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { Logger } from "winston";
+import { QueryDeepPartialEntity } from "typeorm";
 
 import { Tenant } from "../../entities";
 import { IUser } from "../../types/user.types";
@@ -106,7 +107,7 @@ export class TenantController {
   async update(req: CustomRequest<Tenant>, res: Response) {
     const { email } = req.user as IUser;
     const { id } = req.params as unknown as { id: string };
-    const updateData = req.body;
+    const updateData = req.body as QueryDeepPartialEntity<Tenant>;
 
     this.logger.info({ msg: "Tenant update attempt", email, updateData });
 

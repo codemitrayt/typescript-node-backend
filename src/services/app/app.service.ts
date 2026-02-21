@@ -6,7 +6,13 @@ import { ENV } from "../../config";
 import { logger } from "../../logger";
 import { NODE_ENV } from "../../constant";
 import { errorHandler } from "../../middleware";
-import { authRouter, uploadRouter, tenantRouter } from "../../routes";
+import {
+  authRouter,
+  uploadRouter,
+  tenantRouter,
+  conversationRouter,
+  messageRouter,
+} from "../../routes";
 
 export class AppService {
   private app: Application;
@@ -57,6 +63,8 @@ export class AppService {
     this.app.use("/api/v1/auth", authRouter);
     this.app.use("/api/v1/upload", uploadRouter);
     this.app.use("/api/v1/tenant", tenantRouter);
+    this.app.use("/api/v1/conversation", conversationRouter);
+    this.app.use("/api/v1/message", messageRouter);
 
     this.app.use(errorHandler);
   }

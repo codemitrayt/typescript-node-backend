@@ -1,4 +1,5 @@
-import { Repository, FindOptionsWhere } from "typeorm";
+import { Repository, FindOptionsWhere, QueryDeepPartialEntity } from "typeorm";
+
 import { Tenant } from "../../entities";
 import { ITenantFilter } from "../../types/tenant.types";
 
@@ -125,7 +126,7 @@ export class TenantService {
 
   async updateById(
     id: string,
-    updateData: Partial<Tenant>,
+    updateData: QueryDeepPartialEntity<Tenant>,
   ): Promise<Tenant | null> {
     await this.repository.update(id, updateData);
     return this.getById(id);
@@ -144,7 +145,7 @@ export class TenantService {
 
   async updateMany(
     filter: FindOptionsWhere<Tenant>,
-    updateData: Partial<Tenant>,
+    updateData: QueryDeepPartialEntity<Tenant>,
   ) {
     const result = await this.repository.update(filter, updateData);
 

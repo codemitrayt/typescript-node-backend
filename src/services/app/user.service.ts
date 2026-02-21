@@ -1,4 +1,4 @@
-import { Repository, FindOptionsWhere } from "typeorm";
+import { Repository, FindOptionsWhere, QueryDeepPartialEntity } from "typeorm";
 
 import { User } from "../../entities";
 import { IUserFilter } from "../../types/user.types";
@@ -99,7 +99,7 @@ export class UserService {
 
   async updateById(
     id: string,
-    updateData: Partial<User>,
+    updateData: QueryDeepPartialEntity<User>,
   ): Promise<User | null> {
     await this.repository.update(id, updateData);
     return this.getById(id);
@@ -116,7 +116,10 @@ export class UserService {
     return await this.repository.save(user);
   }
 
-  async updateMany(filter: FindOptionsWhere<User>, updateData: Partial<User>) {
+  async updateMany(
+    filter: FindOptionsWhere<User>,
+    updateData: QueryDeepPartialEntity<User>,
+  ) {
     const result = await this.repository.update(filter, updateData);
 
     return {
