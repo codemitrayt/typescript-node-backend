@@ -1,24 +1,24 @@
 import { SortOrder, UpdateQuery } from "mongoose";
 
-import { UserModel } from "../../models";
+import { User } from "../../models";
 import { Filter } from "../../types/shared.types";
-import { IUser, IUserFilter } from "../../types/user.types";
+import { UserType, IUserFilter } from "../../types/user.types";
 
 export class UserService {
-  constructor(private model: typeof UserModel) {}
+  constructor(private model: typeof User) {}
 
-  async create(userData: Partial<IUser>): Promise<IUser> {
+  async create(userData: Partial<UserType>): Promise<UserType> {
     const user = new this.model(userData);
     const savedUser = await user.save();
     return savedUser.toObject();
   }
 
-  async getById(id: string): Promise<IUser | null> {
-    return await this.model.findById(id).lean();
+  async getById(id: string): Promise<UserType | null> {
+    return await this.model.findById(id).populate("tenantId").lean();
   }
 
-  async getOne(filter: Record<string, unknown>): Promise<IUser | null> {
-    return await this.model.findOne(filter).lean();
+  async getOne(filter: Record<string, unknown>): Promise<UserType | null> {
+    return await this.model.findOne(filter).populate("tenantId").lean();
   }
 
   async list(filters: IUserFilter = {}) {
@@ -67,14 +67,14 @@ export class UserService {
     };
   }
 
-  async getAll(filter: Filter = {}): Promise<IUser[]> {
+  async getAll(filter: Filter = {}): Promise<UserType[]> {
     return await this.model.find(filter).lean();
   }
 
   async updateById(
     id: string,
-    updateData: UpdateQuery<IUser>,
-  ): Promise<IUser | null> {
+    updateData: UpdateQuery<UserType>,
+  ): Promise<UserType | null> {
     return await this.model
       .findByIdAndUpdate(id, updateData, {
         new: true,
@@ -85,8 +85,8 @@ export class UserService {
 
   async updateOne(
     filter: Filter,
-    updateData: UpdateQuery<IUser>,
-  ): Promise<IUser | null> {
+    updateData: UpdateQuery<UserType>,
+  ): Promise<UserType | null> {
     return await this.model
       .findOneAndUpdate(filter, updateData, {
         new: true,
@@ -95,7 +95,7 @@ export class UserService {
       .lean();
   }
 
-  async updateMany(filter: Filter, updateData: UpdateQuery<IUser>) {
+  async updateMany(filter: Filter, updateData: UpdateQuery<UserType>) {
     const result = await this.model.updateMany(filter, updateData, {
       runValidators: true,
     });
@@ -106,11 +106,11 @@ export class UserService {
     };
   }
 
-  async deleteById(id: string): Promise<IUser | null> {
+  async deleteById(id: string): Promise<UserType | null> {
     return await this.model.findByIdAndDelete(id).lean();
   }
 
-  async deleteOne(filter: Filter): Promise<IUser | null> {
+  async deleteOne(filter: Filter): Promise<UserType | null> {
     return await this.model.findOneAndDelete(filter).lean();
   }
 
@@ -131,8 +131,8 @@ export class UserService {
     return count;
   }
 
-  async bulkCreate(users: Partial<IUser>[]): Promise<IUser[]> {
+  async bulkCreate(users: Partial<UserType>[]): Promise<UserType[]> {
     const createdUsers = await this.model.insertMany(users);
-    return createdUsers.map((user) => user.toObject());
+    return createdUsers.map((user) => user?.toObject?.());
   }
 }

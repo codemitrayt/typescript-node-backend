@@ -7,7 +7,13 @@ import { logger } from "../../logger";
 import { connectMongoDB } from "../../db";
 import { NODE_ENV } from "../../constant";
 import { errorHandler } from "../../middleware";
-import { authRouter, uploadRouter } from "../../routes";
+import {
+  authRouter,
+  conversationRouter,
+  messageRouter,
+  tenantRouter,
+  uploadRouter,
+} from "../../routes";
 
 export class AppService {
   private app: Application;
@@ -57,6 +63,9 @@ export class AppService {
     this.app.get("/", this.healthCheck);
     this.app.use("/api/v1/auth", authRouter);
     this.app.use("/api/v1/upload", uploadRouter);
+    this.app.use("/api/v1/tenant", tenantRouter);
+    this.app.use("/api/v1/conversation", conversationRouter);
+    this.app.use("/api/v1/message", messageRouter);
 
     this.app.use(errorHandler);
   }

@@ -3,7 +3,7 @@ import { NextFunction, Response, Request } from "express";
 
 import { ENV } from "../config";
 import { logger } from "../logger";
-import { UserModel } from "../models";
+import { User as UserModel } from "../models";
 import { ApiError, asyncHandler } from "../utils";
 import { IUser, UserRole } from "../types/user.types";
 import { ERROR_MESSAGES, NODE_ENV } from "../constant";
@@ -47,7 +47,7 @@ export const verifyJWT = asyncHandler(
         throw new ApiError(401, ERROR_MESSAGES.INVALID_JWT_TOKEN);
       }
 
-      req.user = user;
+      req.user = user as unknown as IUser;
       next();
     } catch (error: unknown) {
       const errorMessage =
@@ -81,7 +81,7 @@ export const getLoggedInUserOrIgnore = asyncHandler(
         return next();
       }
 
-      req.user = user;
+      req.user = user as unknown as IUser;
     } catch (error) {
       logger.error({ error });
     }

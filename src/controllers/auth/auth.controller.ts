@@ -7,7 +7,9 @@ import {
   IUser,
   ILoginRequestBody,
   IVerifyRequestBody,
+  UserType,
 } from "../../types/user.types";
+import { ITenant } from "../../types/tenant.types";
 
 export class AuthController {
   constructor(
@@ -17,7 +19,8 @@ export class AuthController {
     private logger: Logger,
   ) {}
 
-  private _buildUserResponse(user: IUser, token: string) {
+  private _buildUserResponse(user: UserType, token: string) {
+    const tenant = user.tenantId as unknown as ITenant;
     return {
       user: {
         _id: user._id,
@@ -25,12 +28,18 @@ export class AuthController {
         fullName: user.fullName,
         avatar: user.avatar,
         role: user.role,
+        tenant: {
+          id: tenant._id,
+          name: tenant.name,
+          websiteUrl: tenant.websiteUrl,
+          domain: tenant.domain,
+        },
       },
       token,
     };
   }
 
-  async register(req: CustomRequest<IUser>, res: Response) {
+  async register(req: CustomRequest<UserType>, res: Response) {
     const { email, _id: adminUserId } = req.user as IUser;
     const userData = req.body;
 
@@ -135,7 +144,7 @@ export class AuthController {
       );
   }
 
-  async create(req: CustomRequest<IUser>, res: Response) {
+  async create(req: CustomRequest<UserType>, res: Response) {
     const { email, _id: adminUserId } = req.user as IUser;
     const userData = req.body;
 

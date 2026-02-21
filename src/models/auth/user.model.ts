@@ -1,27 +1,36 @@
-import { Model, model, Schema } from "mongoose";
-import { AvailableUserRole } from "../../constant";
-import { CustomModel } from "../../types/shared.types";
-import { IUser, UserRole } from "../../types/user.types";
+import { Schema, model } from "mongoose";
+import { UserType, LoginType, UserRole } from "../../types/user.types";
 
-const userShecma = new Schema<CustomModel<IUser>>(
+const userSchema = new Schema<UserType>(
   {
-    fullName: { type: String, require: [true, "Full name is required"] },
+    tenantId: {
+      type: Schema.Types.ObjectId,
+      ref: "Tenant",
+      default: null,
+      index: true,
+    },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
-    role: { type: String, enum: AvailableUserRole, default: UserRole.USER },
-    password: { type: String, default: null },
-    avatar: { type: { url: String }, required: false },
+    role: {
+      type: String,
+      enum: Object.values(UserRole),
+      default: UserRole.USER,
+    },
+    fullName: { type: String, required: true, trim: true },
     isVerified: { type: Boolean, default: false },
+    avatar: { type: Schema.Types.Mixed, default: null },
+    password: { type: String, default: null },
+    loginType: { type: String, enum: Object.values(LoginType), default: null },
+    lastActiveAt: { type: Date, default: Date.now, index: true },
   },
-
   { timestamps: true, versionKey: false },
 );
 
-export const UserModel: Model<CustomModel<IUser>> = model<CustomModel<IUser>>(
-  "User",
-  userShecma,
-  "users",
-);
+userSchema.index({ tenantId: 1, email: 1 }, { unique: true });
+
+export const User = model<UserType>("User", userSchema, "users");

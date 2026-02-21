@@ -5,7 +5,7 @@ import { TokenService } from "../../services/shared/token.service";
 import { HashService } from "../../services/shared/hash.service";
 
 import { logger } from "../../logger";
-import { UserModel } from "../../models";
+import { User } from "../../models";
 import { asyncHandler } from "../../utils";
 import { ENV, passport } from "../../config";
 import { UserRole } from "../../types/user.types";
@@ -22,7 +22,7 @@ const authRouter: Router = Router();
 // Service instances
 const hasService = new HashService();
 const tokenService = new TokenService();
-const userService = new UserService(UserModel);
+const userService = new UserService(User);
 const authController = new AuthController(
   userService,
   tokenService,
@@ -51,7 +51,7 @@ authRouter.get(
 authRouter.post(
   "/register",
   verifyJWT,
-  verifyPermission([UserRole.ADMIN]),
+  verifyPermission([UserRole.SUPER_ADMIN]),
   registerValidator,
   validate,
   asyncHandler((req, res) => authController.register(req, res)),
@@ -66,7 +66,7 @@ authRouter.post(
 
 authRouter.route("/").post(
   verifyJWT,
-  verifyPermission([UserRole.ADMIN]),
+  verifyPermission([UserRole.SUPER_ADMIN]),
   createUserValidator,
   validate,
   asyncHandler((req, res) => authController.create(req, res)),
