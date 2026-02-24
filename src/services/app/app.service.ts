@@ -11,6 +11,7 @@ import {
   authRouter,
   conversationRouter,
   messageRouter,
+  mlRouter,
   tenantRouter,
   uploadRouter,
 } from "../../routes";
@@ -66,6 +67,7 @@ export class AppService {
     this.app.use("/api/v1/tenant", tenantRouter);
     this.app.use("/api/v1/conversation", conversationRouter);
     this.app.use("/api/v1/message", messageRouter);
+    this.app.use("/api/v1/ml", mlRouter);
 
     this.app.use(errorHandler);
   }

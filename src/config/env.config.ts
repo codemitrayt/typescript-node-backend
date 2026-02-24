@@ -9,6 +9,7 @@ const {
 
   FRONTEND_URL = "http://localhost:5555",
   GOOGLE_CALLBACK_URL = "http://localhost:5088/api/v1/auth/google/callback",
+  BACKEND_ML_URL = "http://localhost:5050",
 
   GOOGLE_CLIENT_SECRET = "DEFAULT_GOOGLE_CLIENT_SECRET",
   GOOGLE_CLIENT_ID = "DEFAULT_GOOGLE_CLIENT_ID",
@@ -43,6 +44,7 @@ const ENV = {
 
   FRONTEND_URL,
   GOOGLE_CALLBACK_URL,
+  BACKEND_ML_URL,
 
   GOOGLE_CLIENT_SECRET,
   GOOGLE_CLIENT_ID,
